@@ -105,7 +105,7 @@ def run_app():
             "save_result_locally": save_results_var.get()
         }
         save_user_data(data)
-        print("Settings saved!")
+        print("Settings saved!\n")
 
     def get_next_post_folder(result_folder):
         # Define the base directory
@@ -323,6 +323,7 @@ def run_app():
                     try:
                         # Get the recipe and MidJourney prompt from the OpenAI response
                         recipe_result, midjourney_prompt = generate_completion(prompt, selected_model)
+
                         if recipe_result and midjourney_prompt:
                             sheet.update_cell(row_index, sheet.row_values(1).index(recipe) + 1, recipe_result)  # Column D is index 4 (for the recipe)
                             sheet.update_cell(row_index, sheet.row_values(1).index(midjourney) + 1, midjourney_prompt)  # Column E is index 5 (for MidJourney prompt)
@@ -333,7 +334,7 @@ def run_app():
                                 post_folder = get_next_post_folder(result_folder)
                                 recipe_file_path = os.path.join(post_folder, "recipe.txt")
                                 with open(recipe_file_path, 'w', encoding='utf-8') as file:
-                                    file.write(recipe)
+                                    file.write(recipe_result)
 
                         print(f"Row '{row[title]}' processed successfully.\n")
                     except Exception as e:
@@ -459,7 +460,7 @@ def run_app():
     ttk.Button(root, text="Browse", command=lambda: _browse_file(prompt_file_path)).grid(row=8, column=2, padx=10, pady=5)
 
     # Checkbox for saving results locally
-    save_results_var = tk.BooleanVar(value= user_data.get("save_result_locally") | False)  # Default is False
+    save_results_var = tk.BooleanVar(value=user_data.get("save_result_locally") or False)  # Default is False
     save_results_checkbox = ttk.Checkbutton(
         root, text="Save Results Locally", variable=save_results_var
     )
